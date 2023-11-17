@@ -1,5 +1,5 @@
-import serverCommunicationSvc from './service';
-import { eventSvc } from '../eventSvc';
+import eventSvc from '../eventSvc';
+import serverCommunicationSvc from './';
 
 export const cpuUsageEvent = eventSvc.subscribe(
   'cpuUsageEvent',

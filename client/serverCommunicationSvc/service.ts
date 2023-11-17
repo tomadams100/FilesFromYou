@@ -1,6 +1,6 @@
 import ws from 'ws';
 
-class ServerCommunicationService {
+export class ServerCommunicationService {
   private webSocket: ws;
   private queue: number[] = [];
 
@@ -50,5 +50,3 @@ class ServerCommunicationService {
     });
   }
 }
-
-export default new ServerCommunicationService();

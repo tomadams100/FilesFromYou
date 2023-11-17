@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 
-class EventService {
+export class EventService {
   private eventEmitter: EventEmitter;
 
   constructor() {
@@ -15,7 +15,3 @@ class EventService {
     this.eventEmitter.on(name, callback);
   }
 }
-
-const eventSvc = new EventService();
-
-export { eventSvc };
