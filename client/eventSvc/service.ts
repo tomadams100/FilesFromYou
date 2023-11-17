@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
-
+import { Event, Schema } from '../types';
+import { z } from 'zod';
 export class EventService {
   private eventEmitter: EventEmitter;
 
@@ -7,11 +8,14 @@ export class EventService {
     this.eventEmitter = new EventEmitter();
   }
 
-  public publish(name: string, data: any) {
-    this.eventEmitter.emit(name, data);
+  public publish<S extends Schema>(event: Event<S>, data: z.infer<S>) {
+    this.eventEmitter.emit(event.name, data);
   }
 
-  public subscribe(name: string, callback: (data: any) => void) {
-    this.eventEmitter.on(name, callback);
+  public subscribe<S extends Schema>(
+    event: Event<S>,
+    callback: (data: z.infer<S>) => void
+  ) {
+    this.eventEmitter.on(event.name, callback);
   }
 }

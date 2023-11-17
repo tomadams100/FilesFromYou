@@ -1,9 +1,11 @@
+import { cpuUsageMeasured } from '../crons/events';
 import eventSvc from '../eventSvc';
 import serverCommunicationSvc from './';
 
-export const cpuUsageEvent = eventSvc.subscribe(
-  'cpuUsageEvent',
-  async (cpuUsage) => {
-    await serverCommunicationSvc.send(cpuUsage);
+export const onCpuUsageMeasured = eventSvc.subscribe(
+  cpuUsageMeasured,
+  async (data) => {
+    const { timestamp, usage, userUUID } = data;
+    await serverCommunicationSvc.send(usage);
   }
 );
