@@ -15,7 +15,7 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/cpu-usage');
+      const response = await axios.get('http://localhost:9090/cpu-usage');
 
       setCpuData(response.data);
     } catch (error) {
