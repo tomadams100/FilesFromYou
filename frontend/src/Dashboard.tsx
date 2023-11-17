@@ -3,7 +3,7 @@ import axios from 'axios';
 import moment from 'moment';
 
 const Dashboard = () => {
-  const [cpuData, setCpuData] = useState<any>();
+  const [cpuData, setCpuData] = useState<number>();
 
   useEffect(() => {
     fetchData();
@@ -15,7 +15,9 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:9090/cpu-usage');
+      const response = await axios.get('http://localhost:8080/cpu-usage');
+
+      console.log('response.data', response.data);
 
       setCpuData(response.data);
     } catch (error) {
@@ -28,9 +30,9 @@ const Dashboard = () => {
   return (
     <div>
       <h1>CPU Usage Dashboard</h1>
-      {cpuData?.user && (
+      {cpuData && (
         <p>
-          {cpuData.user} is the CPU usage at {timeNow}
+          {cpuData.toFixed(2)}% is the CPU usage at {timeNow}
         </p>
       )}
     </div>
