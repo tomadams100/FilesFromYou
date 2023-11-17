@@ -21,10 +21,7 @@ webSocketServer.on('connection', (webSocket) => {
   console.log('Server connected');
   webSocket.on('message', (message) => {
     latestCpuUsageData = message;
-
-    webSocket.send('Message received');
   });
-  webSocket.send('Hello from server');
 });
 
 server.on('upgrade', (request, socket, head) => {

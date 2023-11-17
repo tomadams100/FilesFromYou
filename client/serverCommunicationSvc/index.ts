@@ -15,14 +15,21 @@ class ServerCommunicationService {
     });
   }
 
-  send(cpuUsageData: number): 'success' | 'failure' {
-    try {
-      this.webSocket.send(cpuUsageData);
-      return 'success';
-    } catch (error) {
-      console.error('Error sending CPU usage data:', error);
-      return 'failure';
-    }
+  async send(cpuUsageData: number): Promise<'success' | 'failure'> {
+    return new Promise((resolve) => {
+      try {
+        this.webSocket.send(cpuUsageData, (error) => {
+          if (error) {
+            resolve('failure');
+          } else {
+            resolve('success');
+          }
+        });
+      } catch (error) {
+        console.error('Error sending CPU usage data:', error);
+        return resolve('failure');
+      }
+    });
   }
 }
 
