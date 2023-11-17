@@ -3,7 +3,7 @@ import axios from 'axios';
 import moment from 'moment';
 
 const Dashboard = () => {
-  const [cpuData, setCpuData] = useState<number>();
+  const [cpuData, setCpuData] = useState<string>();
 
   useEffect(() => {
     fetchData();
@@ -32,7 +32,7 @@ const Dashboard = () => {
       <h1>CPU Usage Dashboard</h1>
       {cpuData && (
         <p>
-          {cpuData.toFixed(2)}% is the CPU usage at {timeNow}
+          {cpuData}% is the CPU usage at {timeNow}
         </p>
       )}
     </div>

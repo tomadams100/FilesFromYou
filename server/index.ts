@@ -12,7 +12,7 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
-let latestCpuUsageData: any;
+let latestCpuUsageData: string;
 
 const server = createServer(app);
 const webSocketServer = new WebSocket.Server({ noServer: true });
@@ -20,7 +20,8 @@ const webSocketServer = new WebSocket.Server({ noServer: true });
 webSocketServer.on('connection', (webSocket) => {
   console.log('Server connected');
   webSocket.on('message', (message) => {
-    latestCpuUsageData = message;
+    latestCpuUsageData = Number(message.toString()).toFixed(2);
+    console.log('Received CPU usage data:', latestCpuUsageData);
   });
 });
 

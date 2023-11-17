@@ -2,6 +2,7 @@ import ws from 'ws';
 
 class ServerCommunicationService {
   private webSocket: ws;
+  private queue: number[] = [];
 
   constructor() {
     this.webSocket = new ws(
@@ -9,17 +10,33 @@ class ServerCommunicationService {
     );
     this.webSocket.on('open', () => {
       console.log('WebSocket open');
+      this.processQueue();
     });
     this.webSocket.on('close', () => {
       console.log('WebSocket close');
     });
   }
 
-  async send(cpuUsageData: number): Promise<'success' | 'failure'> {
+  private async processQueue(): Promise<void> {
+    while (this.queue.length > 0) {
+      const cpuUsageData = this.queue.shift();
+      if (cpuUsageData) {
+        const result = await this.send(cpuUsageData);
+        if (result === 'failure') {
+          this.queue.push(cpuUsageData);
+          break;
+        }
+      }
+    }
+  }
+
+  public async send(cpuUsageData: number): Promise<'success' | 'failure'> {
     return new Promise((resolve) => {
       try {
         this.webSocket.send(cpuUsageData, (error) => {
           if (error) {
+            console.error('Error sending CPU usage data:', error);
+            this.queue.push(cpuUsageData);
             resolve('failure');
           } else {
             resolve('success');
@@ -27,6 +44,7 @@ class ServerCommunicationService {
         });
       } catch (error) {
         console.error('Error sending CPU usage data:', error);
+        this.queue.push(cpuUsageData);
         return resolve('failure');
       }
     });
