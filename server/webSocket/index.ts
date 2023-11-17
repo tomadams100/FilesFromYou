@@ -1,14 +1,19 @@
 import WebSocket from 'ws';
 import { DbSvc } from '../dbSvc';
-import moment from 'moment';
+const dbSvc = new DbSvc('data.json');
 
 export const handleWebSocketConnection = (webSocket: WebSocket) => {
   console.log('Server connected');
   webSocket.on('message', async (message) => {
-    const dbSvc = new DbSvc('data.json');
+    const cpuUsageData = JSON.parse(message.toString()) as {
+      timestamp: number;
+      usage: number;
+      userUUID: string;
+    };
 
-    const key = moment().format('h:mm:ss');
-    const value = message.toString();
-    dbSvc.writeData(key, value);
+    dbSvc.writeData(cpuUsageData.userUUID, {
+      timestamp: cpuUsageData.timestamp.toString(),
+      usage: cpuUsageData.usage.toString()
+    });
   });
 };

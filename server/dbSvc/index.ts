@@ -31,7 +31,7 @@ export class DbSvc {
     }
   }
 
-  public writeData(key: string, value: string) {
+  public writeData(key: string, value: { [key: string]: string }) {
     try {
       const existingData = this.readData();
 
