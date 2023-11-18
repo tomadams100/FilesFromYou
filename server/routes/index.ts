@@ -1,5 +1,6 @@
 import express from 'express';
 import dbSvc from '../dbSvc';
+import * as utils from '../utils';
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.get('/cpu-usage', async (req, res) => {
       return new Error('User not found');
     }
 
-    const latestCpuUsageData = await dbSvc.getLatestCpuUsage(user.userUUID);
+    const latestCpuUsageData = utils.getLatestCpuUsage(user);
 
     res.status(200).send(latestCpuUsageData);
   } catch (error) {
@@ -23,9 +24,15 @@ router.get('/cpu-usage', async (req, res) => {
 
 router.get('/last-hour-avg', async (req, res) => {
   try {
-    const _lastHourAvg = await dbSvc.getAverageCpuUsageForLastXMinutes({
+    // TODO: do not hard code userUUID
+    const user = await dbSvc.getUser('123abc');
+
+    if (!user) {
+      return new Error('User not found');
+    }
+    const _lastHourAvg = utils.getAverageCpuUsageForLastXMinutes({
       minutes: 60,
-      userUUID: '123abc'
+      user
     });
 
     if (!_lastHourAvg) {
