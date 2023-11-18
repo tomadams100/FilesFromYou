@@ -12,12 +12,7 @@ router.get('/cpu-usage', async (req, res) => {
       return new Error('User not found');
     }
 
-    const latestCpuUsageData =
-      user.cpuUsage[
-        Object.keys(user.cpuUsage).sort((a, b) => {
-          return parseInt(b) - parseInt(a);
-        })[0]
-      ];
+    const latestCpuUsageData = await dbSvc.getLatestCpuUsage(user.userUUID);
 
     res.status(200).send(latestCpuUsageData);
   } catch (error) {

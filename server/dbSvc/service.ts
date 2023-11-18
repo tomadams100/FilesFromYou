@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { UserModel } from '../models';
-import type { User } from 'models';
+import type { CpuUsage, User } from 'models';
+import { UserModel } from './models';
 
 export class DbSvc {
   private mongoDbUrl: string;
@@ -33,19 +33,18 @@ export class DbSvc {
     return await UserModel.findOne({ userUUID });
   }
 
-  public async updateUser(
-    userUUID: string,
-    cpuUsage: {
-      [key: string]: string;
-    }
-  ): Promise<User | null> {
+  public async updateUser(args: {
+    userUUID: string;
+    cpuUsage: CpuUsage;
+  }): Promise<User | null> {
     try {
+      const { userUUID, cpuUsage } = args;
       const user = await UserModel.findOne({ userUUID });
 
       if (!user) return null;
 
       const result = await user.updateOne(
-        { $set: { cpuUsage: { ...user.cpuUsage, ...cpuUsage } } },
+        { $push: { cpuUsage: cpuUsage } },
         { new: true }
       );
 
@@ -59,5 +58,13 @@ export class DbSvc {
       console.error('Error updating user:', error);
       return null;
     }
+  }
+
+  public async getLatestCpuUsage(userUUID: string): Promise<CpuUsage | null> {
+    const user = await this.getUser(userUUID);
+
+    if (!user) return null;
+
+    return user.cpuUsage.sort((a, b) => b.timestamp - a.timestamp)[0];
   }
 }

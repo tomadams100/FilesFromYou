@@ -4,7 +4,7 @@ import { CpuUsage } from 'models';
 
 const setTimeoutPromise = promisify(setTimeout);
 
-export async function measureCPUUsage(): Promise<CpuUsage> {
+export async function measureCPUUsage(): Promise<number> {
   const cpuStartTimes = os.cpus()[0].times;
   let cpuUsagePercentage: number = 0;
 
@@ -22,7 +22,6 @@ export async function measureCPUUsage(): Promise<CpuUsage> {
   const totalCpuTime =
     cpuUsage.user + cpuUsage.nice + cpuUsage.sys + cpuUsage.idle;
 
-  cpuUsagePercentage = ((totalCpuTime - cpuUsage.idle) / totalCpuTime) * 100;
-
-  return { usage: cpuUsagePercentage };
+  return (cpuUsagePercentage =
+    ((totalCpuTime - cpuUsage.idle) / totalCpuTime) * 100);
 }

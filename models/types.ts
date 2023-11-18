@@ -12,7 +12,5 @@ export type CpuUsage = z.infer<typeof CpuUsageSchema>;
 
 export type User = {
   userUUID: string;
-  cpuUsage: {
-    [key: string]: string;
-  };
+  cpuUsage: CpuUsage[];
 };

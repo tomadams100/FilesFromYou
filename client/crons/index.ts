@@ -13,7 +13,7 @@ export const startCronJob = cron.schedule('*/10 * * * * *', async () => {
 
   eventSvc.publish(cpuUsageMeasured, {
     timestamp,
-    usage,
+    usage: { usage, timestamp },
     userUUID
   });
 });
