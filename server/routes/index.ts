@@ -21,4 +21,24 @@ router.get('/cpu-usage', async (req, res) => {
   }
 });
 
+router.get('/last-hour-avg', async (req, res) => {
+  try {
+    const _lastHourAvg = await dbSvc.getAverageCpuUsageForLastXMinutes({
+      minutes: 60,
+      userUUID: '123abc'
+    });
+
+    if (!_lastHourAvg) {
+      return new Error('User not found');
+    }
+
+    const lastHourAvg = Math.floor(_lastHourAvg);
+
+    res.status(200).json(lastHourAvg);
+  } catch (error) {
+    console.error('Error fetching CPU usage data:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 export const routes = router;
