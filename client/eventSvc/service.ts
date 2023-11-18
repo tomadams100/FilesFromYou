@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { Event, Schema } from 'models';
+import { Event, EventSchema } from 'models';
 import { z } from 'zod';
 export class EventService {
   private eventEmitter: EventEmitter;
@@ -8,11 +8,11 @@ export class EventService {
     this.eventEmitter = new EventEmitter();
   }
 
-  public publish<S extends Schema>(event: Event<S>, data: z.infer<S>) {
+  public publish<S extends EventSchema>(event: Event<S>, data: z.infer<S>) {
     this.eventEmitter.emit(event.name, data);
   }
 
-  public subscribe<S extends Schema>(
+  public subscribe<S extends EventSchema>(
     event: Event<S>,
     callback: (data: z.infer<S>) => void
   ) {

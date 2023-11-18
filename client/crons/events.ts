@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Event, Schema, CpuUsageSchema } from 'models';
+import { Event, EventSchema, CpuUsageSchema } from 'models';
 
 export const cpuUsageMeasured = generateEvent({
   name: 'cpuUsageMeasured',
@@ -10,7 +10,7 @@ export const cpuUsageMeasured = generateEvent({
   })
 });
 
-function generateEvent<S extends Schema>(event: Event<S>): Event<S> {
+function generateEvent<S extends EventSchema>(event: Event<S>): Event<S> {
   return {
     name: event.name,
     schema: event.schema

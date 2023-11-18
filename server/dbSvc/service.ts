@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { UserModel } from '../models';
-import type { User } from '../models/schemas';
+import type { User } from 'models';
 
 export class DbSvc {
   private mongoDbUrl: string;
