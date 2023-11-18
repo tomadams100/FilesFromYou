@@ -17,20 +17,9 @@ const Dashboard = () => {
     try {
       const response = await axios.get('http://localhost:8080/cpu-usage');
 
-      const data = response.data as {
-        [key: string]: string;
-      };
+      const data = response.data as string;
 
-      const latestCpuUsageData =
-        data[
-          Object.keys(data).sort((a, b) =>
-            moment(`2021-01-01 ${a}`).isBefore(moment(`2021-01-01 ${b}`))
-              ? 1
-              : -1
-          )[0]
-        ];
-
-      setCpuData(latestCpuUsageData);
+      setCpuData(data);
     } catch (error) {
       console.error('Error fetching CPU usage data:', error);
     }

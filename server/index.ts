@@ -1,7 +1,7 @@
+import 'dotenv/config';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import 'dotenv/config';
 import { createServer } from 'http';
 import WebSocket from 'ws';
 import { handleWebSocketConnection } from './webSocket';

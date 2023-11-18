@@ -1,12 +1,23 @@
 import express from 'express';
-import { DbSvc } from '../dbSvc';
+import dbSvc from '../dbSvc';
 
 const router = express.Router();
-const dbSvc = new DbSvc('data.json');
 
 router.get('/cpu-usage', async (req, res) => {
   try {
-    const latestCpuUsageData = dbSvc.readData();
+    // TODO: do not hard code userUUID
+    const user = await dbSvc.getUser('123abc');
+
+    if (!user) {
+      return new Error('User not found');
+    }
+
+    const latestCpuUsageData =
+      user.cpuUsage[
+        Object.keys(user.cpuUsage).sort((a, b) => {
+          return parseInt(b) - parseInt(a);
+        })[0]
+      ];
 
     res.status(200).send(latestCpuUsageData);
   } catch (error) {

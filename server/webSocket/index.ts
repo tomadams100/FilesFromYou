@@ -1,6 +1,5 @@
 import WebSocket from 'ws';
-import { DbSvc } from '../dbSvc';
-const dbSvc = new DbSvc('data.json');
+import dbSvc from '../dbSvc';
 
 export const handleWebSocketConnection = (webSocket: WebSocket) => {
   console.log('Server connected');
@@ -11,9 +10,8 @@ export const handleWebSocketConnection = (webSocket: WebSocket) => {
       userUUID: string;
     };
 
-    dbSvc.writeData(cpuUsageData.userUUID, {
-      timestamp: cpuUsageData.timestamp.toString(),
-      usage: cpuUsageData.usage.toString()
+    await dbSvc.updateUser(cpuUsageData.userUUID, {
+      [cpuUsageData.timestamp]: cpuUsageData.usage.toString()
     });
   });
 };
