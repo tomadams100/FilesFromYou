@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { Event, Schema } from '../types';
+import { Event, Schema, CpuUsageSchema } from 'models';
 
 export const cpuUsageMeasured = generateEvent({
   name: 'cpuUsageMeasured',
   schema: z.object({
-    usage: z.number(),
+    usage: CpuUsageSchema,
     timestamp: z.number(),
     userUUID: z.string()
   })

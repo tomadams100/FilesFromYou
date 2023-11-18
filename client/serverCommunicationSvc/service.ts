@@ -1,14 +1,14 @@
 import ws from 'ws';
-
-type CpuUsageData = {
-  timestamp: number;
-  usage: number;
-  userUUID: string;
-};
+import { CpuUsage } from 'models';
 
 export class ServerCommunicationService {
   private webSocket: ws;
-  private queue: CpuUsageData[] = [];
+  private queue: Array<
+    CpuUsage & {
+      timestamp: number;
+      userUUID: string;
+    }
+  > = [];
 
   constructor() {
     this.webSocket = new ws(
@@ -36,7 +36,12 @@ export class ServerCommunicationService {
     }
   }
 
-  public async send(args: CpuUsageData): Promise<'success' | 'failure'> {
+  public async send(
+    args: CpuUsage & {
+      timestamp: number;
+      userUUID: string;
+    }
+  ): Promise<'success' | 'failure'> {
     return new Promise((resolve) => {
       try {
         this.webSocket.send(JSON.stringify(args), (error) => {

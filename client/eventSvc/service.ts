@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { Event, Schema } from '../types';
+import { Event, Schema } from 'models';
 import { z } from 'zod';
 export class EventService {
   private eventEmitter: EventEmitter;

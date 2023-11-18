@@ -6,6 +6,10 @@ export const onCpuUsageMeasured = eventSvc.subscribe(
   cpuUsageMeasured,
   async (data) => {
     const { timestamp, usage, userUUID } = data;
-    await serverCommunicationSvc.send(data);
+    await serverCommunicationSvc.send({
+      timestamp,
+      usage: usage.usage,
+      userUUID
+    });
   }
 );
