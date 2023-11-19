@@ -69,4 +69,27 @@ router.get('/above-avg-usage-users', async (req, res) => {
   }
 });
 
+router.get('/user-percentile', async (req, res) => {
+  try {
+    const allUsers = await userSvc.getAllUsers();
+
+    const user = allUsers.find((user) => user.userUUID === '123abc');
+
+    if (!user) {
+      return new Error('User not found');
+    }
+
+    const percentile = utils.getUserPercentileForLastXMinutes({
+      allUsers,
+      minutes: 60,
+      user
+    });
+
+    res.status(200).json(percentile);
+  } catch (error) {
+    console.error('Error fetching CPU usage data:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 export const routes = router;

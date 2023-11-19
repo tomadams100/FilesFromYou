@@ -8,7 +8,7 @@ export function getCpuUsageForRange(args: {
   user: User;
   startTimestamp: number;
   endTimestamp: number;
-}): CpuUsage[] | null {
+}): CpuUsage[] {
   const { user, startTimestamp, endTimestamp } = args;
 
   return user.cpuUsage.filter(
@@ -19,7 +19,7 @@ export function getCpuUsageForRange(args: {
 export function getCpuUsageForLastXMinutes(args: {
   user: User;
   minutes: number;
-}): CpuUsage[] | null {
+}): CpuUsage[] {
   const { user, minutes } = args;
 
   const now = Date.now();
@@ -35,7 +35,7 @@ export function getCpuUsageForLastXMinutes(args: {
 export function getAverageCpuUsageForLastXMinutes(args: {
   user: User;
   minutes: number;
-}): number | null {
+}): number {
   const { user, minutes } = args;
 
   const cpuUsageData = getCpuUsageForLastXMinutes({
@@ -43,25 +43,25 @@ export function getAverageCpuUsageForLastXMinutes(args: {
     minutes
   });
 
-  if (!cpuUsageData) return null;
-
   const cpuUsageTotal = cpuUsageData.reduce(
     (total, data) => total + data.usage,
     0
   );
 
-  return cpuUsageTotal / cpuUsageData.length;
+  return cpuUsageData.length > 0 ? cpuUsageTotal / cpuUsageData.length : 0;
 }
 
 export function getAllUsersAverageCpuUsageForLastXMinutes(args: {
   allUsers: User[];
   minutes: number;
-}): number | null {
+}): number {
   const { minutes, allUsers } = args;
 
   const _allUsersCpuUsageData = allUsers
     .map((user) => getAverageCpuUsageForLastXMinutes({ user, minutes }))
     .filter((data) => data !== null);
+
+  console.log('_allUsersCpuUsageData', _allUsersCpuUsageData);
 
   const allUsersCpuUsageData = _allUsersCpuUsageData.filter(
     (data) => data !== null
@@ -78,7 +78,7 @@ export function getAllUsersAverageCpuUsageForLastXMinutes(args: {
 export function getUsersWithAboveAvgCpuUsageForLastXMinutes(args: {
   allUsers: User[];
   minutes: number;
-}): Array<{ user: User; userAvg: number }> | null {
+}): Array<{ user: User; userAvg: number }> {
   const { allUsers, minutes } = args;
 
   const allUserAvgCpuUsage = getAllUsersAverageCpuUsageForLastXMinutes({
@@ -86,11 +86,8 @@ export function getUsersWithAboveAvgCpuUsageForLastXMinutes(args: {
     allUsers
   });
 
-  if (!allUserAvgCpuUsage) return null;
-
   const allUsersCpuUsageData = allUsers.map((user) => {
     const userAvg = getAverageCpuUsageForLastXMinutes({ minutes, user });
-    if (!userAvg) return null;
     return { user, userAvg };
   });
 
@@ -103,3 +100,23 @@ export function getUsersWithAboveAvgCpuUsageForLastXMinutes(args: {
     userAvg: number;
   }[];
 }
+
+export function getUserPercentileForLastXMinutes(args: {
+  user: User;
+  allUsers: User[];
+  minutes: number;
+}): number {
+  const { user, allUsers, minutes } = args;
+
+  const sortedUsers = allUsers.slice().sort((a, b) => {
+    const avgA = getAverageCpuUsageForLastXMinutes({ user: a, minutes });
+    const avgB = getAverageCpuUsageForLastXMinutes({ user: b, minutes });
+    return (avgB || 0) - (avgA || 0);
+  });
+
+  const userIndex =
+    sortedUsers.findIndex((u) => u.userUUID === user.userUUID) + 1;
+
+  return (userIndex / sortedUsers.length) * 100;
+}
+
