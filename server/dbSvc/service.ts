@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
-import type { CpuUsage, User } from 'models';
-import { UserModel } from './models';
+import mongoose, { Document, Model } from 'mongoose';
 
 export class DbSvc {
   private mongoDbUrl: string;
@@ -19,47 +17,56 @@ export class DbSvc {
     });
   }
 
-  public async createUser(userUUID: string): Promise<string> {
-    const user = new UserModel({
-      userUUID,
-      cpuUsage: {}
-    });
-
-    const result = await user.save();
-    return result.userUUID;
-  }
-
-  public async getUser(userUUID: string): Promise<User | null> {
-    return await UserModel.findOne({ userUUID });
-  }
-
-  public async getAllUsers(): Promise<User[]> {
-    return await UserModel.find({});
-  }
-
-  public async updateUser(args: {
+  public async get<D extends Document>(args: {
+    model: Model<D>;
     userUUID: string;
-    cpuUsage: CpuUsage;
-  }): Promise<User | null> {
+    filter?: Partial<mongoose.ObtainDocumentType<D>>;
+  }): Promise<D | null> {
+    const { userUUID, filter } = args;
     try {
-      const { userUUID, cpuUsage } = args;
-      const user = await UserModel.findOne({ userUUID });
-
-      if (!user) return null;
-
-      const result = await user.updateOne(
-        { $push: { cpuUsage: cpuUsage } },
-        { new: true }
-      );
-
-      if (!result) return null;
-
-      return {
-        userUUID: result.userUUID,
-        cpuUsage: result.cpuUsage
-      };
+      return !filter
+        ? await args.model.findOne({ userUUID })
+        : await args.model.findOne({ userUUID, filter });
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.log('error', error);
+      return null;
+    }
+  }
+
+  public async list<D extends Document>(args: {
+    model: Model<D>;
+    filter: Partial<mongoose.ObtainDocumentType<D>>;
+  }): Promise<D[]> {
+    const { filter } = args;
+    try {
+      return await args.model.find({ filter });
+    } catch (error) {
+      console.log('error', error);
+      return [];
+    }
+  }
+
+  public async create<D extends Document>(args: {
+    model: Model<D>;
+    data: mongoose.ObtainDocumentType<D>;
+  }): Promise<D | null> {
+    const { data } = args;
+    try {
+      return await args.model.create(data);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  public async update<D extends Document>(args: {
+    model: Model<D>;
+    data: mongoose.ObtainDocumentType<D>;
+    id: mongoose.Types.ObjectId;
+  }): Promise<D | null> {
+    const { id, data } = args;
+    try {
+      return await args.model.findOneAndUpdate({ _id: id }, data);
+    } catch (error) {
       return null;
     }
   }
