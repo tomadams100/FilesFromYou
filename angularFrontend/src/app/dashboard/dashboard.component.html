@@ -16,8 +16,15 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
       </div>
       <div class="stat-title">Latest</div>
-      <div class="stat-value">20%</div>
-      <div class="stat-desc">As of 11:00</div>
+      <div *ngIf="latestUserCpuUsage === '' else latestUserCpuUsageDiv">
+        <span class="loading loading-spinner loading-md"></span>
+      </div>
+      
+      <ng-template #latestUserCpuUsageDiv>
+        <div class="stat-value">{{ latestUserCpuUsage }}%</div>
+      </ng-template>
+      
+      <div class="stat-desc">As of {{ latestUserTimestamp }}</div>
     </div>
     
     <div class="stat">
@@ -34,8 +41,13 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
       </div>
       <div class="stat-title">Hourly Average</div>
-      <div class="stat-value">35%</div>
-      <div class="stat-desc">↘︎ 90 (14%)</div>
+      <div *ngIf="userLastHourAvgUsage === '' else userLastHourAvgUsageDiv">
+        <span class="loading loading-spinner loading-md"></span>
+      </div>
+      
+      <ng-template #userLastHourAvgUsageDiv>
+        <div class="stat-value">{{ userLastHourAvgUsage }}%</div>
+      </ng-template>
     </div>
     
   </div>
