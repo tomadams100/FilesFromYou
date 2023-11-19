@@ -50,4 +50,23 @@ router.get('/last-hour-avg', async (req, res) => {
   }
 });
 
+router.get('/above-avg-usage-users', async (req, res) => {
+  try {
+    const allUsers = await userSvc.getAllUsers();
+
+    const aboveAvgUsageUsers =
+      utils.getUsersWithAboveAvgCpuUsageForLastXMinutes({
+        allUsers,
+        minutes: 60
+      });
+
+    console.log('aboveAvgUsageUsers', aboveAvgUsageUsers);
+
+    res.status(200).json(aboveAvgUsageUsers);
+  } catch (error) {
+    console.error('Error fetching CPU usage data:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 export const routes = router;
