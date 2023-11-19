@@ -9,7 +9,7 @@ export const startCronJob = cron.schedule('*/10 * * * * *', async () => {
   const timestamp = Date.now();
 
   // TODO: do not hard code userUUID
-  const userUUID = '123abc';
+  const userUUID = 'user_0';
 
   eventSvc.publish(cpuUsageMeasured, {
     timestamp,

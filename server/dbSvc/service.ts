@@ -1,4 +1,8 @@
 import mongoose, { Document, Model } from 'mongoose';
+import fs from 'fs';
+import { User } from 'models';
+import { generateSeedData } from './createSeedData';
+import { UserModel } from './models';
 
 export class DbSvc {
   private mongoDbUrl: string;
@@ -14,6 +18,7 @@ export class DbSvc {
     this.db = mongoose.connection;
     this.db.once('open', async () => {
       console.log('Connected to database');
+      process.env.ENVIRONMENT === 'development' && (await this.seedDatabase());
     });
   }
 
@@ -71,5 +76,26 @@ export class DbSvc {
     } catch (error) {
       return null;
     }
+  }
+
+  private async seedDatabase(): Promise<void> {
+    try {
+      await this.mongoose.connection.dropDatabase();
+      generateSeedData();
+      const seedDataFile = fs.readFileSync('seedData.json', 'utf-8');
+      const seedData = JSON.parse(seedDataFile) as User[];
+
+      for (const user of seedData) {
+        await this.create({
+          model: UserModel,
+          data: user
+        });
+      }
+    } catch (error) {
+      console.log('No seed data found, error: ', error);
+      return;
+    }
+
+    console.log('Database seeded with test data');
   }
 }

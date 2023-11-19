@@ -7,11 +7,11 @@ const router = express.Router();
 router.get('/cpu-usage', async (req, res) => {
   try {
     // TODO: do not hard code id
-    const userUUID = '123abc';
+    const userUUID = 'user_0';
     const user = await userSvc.getUser(userUUID);
 
     if (!user) {
-      return new Error('User not found');
+      return new Error('User not found in cpu-usage route');
     }
 
     const latestCpuUsageData = utils.getLatestCpuUsage(user);
@@ -26,20 +26,16 @@ router.get('/cpu-usage', async (req, res) => {
 router.get('/last-hour-avg', async (req, res) => {
   try {
     // TODO: do not hard code userUUID
-    const userUUID = '123abc';
+    const userUUID = 'user_0';
     const user = await userSvc.getUser(userUUID);
 
     if (!user) {
-      return new Error('User not found');
+      return new Error('User not found in last-hour-avg route');
     }
     const _lastHourAvg = utils.getAverageCpuUsageForLastXMinutes({
       minutes: 60,
       user
     });
-
-    if (!_lastHourAvg) {
-      return new Error('User not found');
-    }
 
     const lastHourAvg = Math.floor(_lastHourAvg);
 
@@ -73,10 +69,10 @@ router.get('/user-percentile', async (req, res) => {
   try {
     const allUsers = await userSvc.getAllUsers();
 
-    const user = allUsers.find((user) => user.userUUID === '123abc');
+    const user = allUsers.find((user) => user.userUUID === 'user_0');
 
     if (!user) {
-      return new Error('User not found');
+      return new Error('User not found in user-percentile route');
     }
 
     const percentile = utils.getUserPercentileForLastXMinutes({

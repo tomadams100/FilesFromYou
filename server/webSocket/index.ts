@@ -14,8 +14,7 @@ export const handleWebSocketConnection = (webSocket: WebSocket) => {
     const user = await userSvc.getUser(userUUID);
 
     if (!user) {
-      console.log('User not found');
-      return new Error('User not found');
+      return new Error('User not found in websocket message');
     }
 
     await userSvc.updateUser({

@@ -61,8 +61,6 @@ export function getAllUsersAverageCpuUsageForLastXMinutes(args: {
     .map((user) => getAverageCpuUsageForLastXMinutes({ user, minutes }))
     .filter((data) => data !== null);
 
-  console.log('_allUsersCpuUsageData', _allUsersCpuUsageData);
-
   const allUsersCpuUsageData = _allUsersCpuUsageData.filter(
     (data) => data !== null
   ) as number[];
