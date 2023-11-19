@@ -1,13 +1,14 @@
 import express from 'express';
-import dbSvc from '../dbSvc';
 import * as utils from '../utils';
+import userSvc from '../userSvc';
 
 const router = express.Router();
 
 router.get('/cpu-usage', async (req, res) => {
   try {
-    // TODO: do not hard code userUUID
-    const user = await dbSvc.getUser('123abc');
+    // TODO: do not hard code id
+    const userUUID = '123abc';
+    const user = await userSvc.getUser(userUUID);
 
     if (!user) {
       return new Error('User not found');
@@ -25,7 +26,8 @@ router.get('/cpu-usage', async (req, res) => {
 router.get('/last-hour-avg', async (req, res) => {
   try {
     // TODO: do not hard code userUUID
-    const user = await dbSvc.getUser('123abc');
+    const userUUID = '123abc';
+    const user = await userSvc.getUser(userUUID);
 
     if (!user) {
       return new Error('User not found');

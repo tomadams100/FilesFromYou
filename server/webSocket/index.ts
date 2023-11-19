@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
-import dbSvc from '../dbSvc';
 import { CpuUsage } from 'models';
+import userSvc from '../userSvc';
 
 export const handleWebSocketConnection = (webSocket: WebSocket) => {
   console.log('Server connected');
@@ -11,6 +11,16 @@ export const handleWebSocketConnection = (webSocket: WebSocket) => {
 
     const { timestamp, usage, userUUID } = cpuUsageData;
 
-    await dbSvc.updateUser({ userUUID, cpuUsage: { usage, timestamp } });
+    const user = await userSvc.getUser(userUUID);
+
+    if (!user) {
+      console.log('User not found');
+      return new Error('User not found');
+    }
+
+    await userSvc.updateUser({
+      cpuUsage: { timestamp, usage },
+      userUUID
+    });
   });
 };
