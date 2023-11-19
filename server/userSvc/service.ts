@@ -31,7 +31,7 @@ export class UserSvc {
 
   public async getAllUsers(): Promise<User[]> {
     try {
-      return await dbSvc.list({ model: UserModel, filter: {} });
+      return await dbSvc.list({ model: UserModel });
     } catch (error) {
       console.error('Error getting all users:', error);
       return [];

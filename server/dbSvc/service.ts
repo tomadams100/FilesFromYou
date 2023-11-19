@@ -35,11 +35,13 @@ export class DbSvc {
 
   public async list<D extends Document>(args: {
     model: Model<D>;
-    filter: Partial<mongoose.ObtainDocumentType<D>>;
+    filter?: Partial<mongoose.ObtainDocumentType<D>>;
   }): Promise<D[]> {
     const { filter } = args;
     try {
-      return await args.model.find({ filter });
+      return !filter
+        ? await args.model.find()
+        : await args.model.find({ filter });
     } catch (error) {
       console.log('error', error);
       return [];
