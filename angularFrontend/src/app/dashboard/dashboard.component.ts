@@ -107,7 +107,20 @@ export class DashboardComponent {
         }),
         tap((data: Array<{ user: User; userAvg: number }> | null | null) => {
           if (data) {
-            this.usersWithAboveAvgUsage = data;
+            this.usersWithAboveAvgUsage = data
+              .sort((a, b) => {
+                return b.userAvg - a.userAvg;
+              })
+              .map((user) => {
+                return {
+                  user: user.user,
+                  userAvg: parseFloat(
+                    `${user.userAvg.toFixed(1)}${
+                      user.userAvg % 1 === 0 ? '.0' : ''
+                    }`
+                  ),
+                };
+              });
           }
         })
       );
