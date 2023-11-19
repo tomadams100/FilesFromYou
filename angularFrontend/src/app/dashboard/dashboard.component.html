@@ -32,7 +32,13 @@
         <i class="fa fa-percent fa-2xl" aria-hidden="true"></i>
       </div>
       <div class="stat-title">Percentile</div>
-      <div class="stat-value">10</div>
+      <div *ngIf="userPercentile === '' else userPercentileDiv">
+        <span class="loading loading-spinner loading-md"></span>
+      </div>
+      
+      <ng-template #userPercentileDiv>
+        <div class="stat-value">{{ userPercentile }}</div>
+      </ng-template>
       <div class="stat-desc">Across all users</div>
     </div>
     
@@ -51,7 +57,9 @@
     </div>
     
   </div>
-  <h1 class="text-xl font-bold my-5">High CPU Usage</h1>
+  <h1 class="text-xl font-bold my-5">High CPU Usage <div class="tooltip" data-tip="Users with a higher than average hourly CPU usage">
+    <i class="fa fa-info-circle fa-xs" aria-hidden="true"></i>
+  </div></h1>
   <div class="overflow-x-auto">
     <table class="table">
       <thead>

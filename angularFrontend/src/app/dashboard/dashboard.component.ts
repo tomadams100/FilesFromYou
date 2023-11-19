@@ -22,6 +22,7 @@ export class DashboardComponent {
   latestUserTimestamp: string = '';
   userLastHourAvgUsage: string = '';
   usersWithAboveAvgUsage: Array<{ user: User; userAvg: number }> | null = null;
+  userPercentile: string = '';
   private subscription: Subscription = new Subscription();
 
   constructor(private http: HttpClient) {}
@@ -45,6 +46,13 @@ export class DashboardComponent {
       .pipe(
         switchMap(() => {
           return this.fetchUsersWithAboveAvgUsage();
+        })
+      )
+      .subscribe();
+    this.subscription = timer(0, 5000)
+      .pipe(
+        switchMap(() => {
+          return this.fetchUserPercentile();
         })
       )
       .subscribe();
@@ -99,11 +107,23 @@ export class DashboardComponent {
         }),
         tap((data: Array<{ user: User; userAvg: number }> | null | null) => {
           if (data) {
-            console.log('data', data);
             this.usersWithAboveAvgUsage = data;
           }
         })
       );
+  }
+
+  private fetchUserPercentile(): Observable<number> {
+    return this.http.get<number>('http://localhost:8080/user-percentile').pipe(
+      catchError((error: any) => {
+        console.error('Error fetching last hour average:', error);
+        return EMPTY;
+      }),
+      switchMap((avg: number) => {
+        this.userPercentile = avg.toFixed(2);
+        return EMPTY;
+      })
+    );
   }
 
   private getFormattedTime(timestamp: number): string {
