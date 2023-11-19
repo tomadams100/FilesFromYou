@@ -56,8 +56,6 @@ router.get('/above-avg-usage-users', async (req, res) => {
         minutes: 60
       });
 
-    console.log('aboveAvgUsageUsers', aboveAvgUsageUsers);
-
     res.status(200).json(aboveAvgUsageUsers);
   } catch (error) {
     console.error('Error fetching CPU usage data:', error);
