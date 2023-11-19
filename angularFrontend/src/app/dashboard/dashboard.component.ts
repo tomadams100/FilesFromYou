@@ -7,19 +7,21 @@ import {
   switchMap,
   timer,
   EMPTY,
+  tap,
 } from 'rxjs';
-import { CpuUsage } from 'models';
+import { CpuUsage, User } from 'models';
 import moment from 'moment';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'], // Use 'styleUrls' instead of 'styleUrl'
+  styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent {
   latestUserCpuUsage: string = '';
   latestUserTimestamp: string = '';
   userLastHourAvgUsage: string = '';
+  usersWithAboveAvgUsage: Array<{ user: User; userAvg: number }> | null = null;
   private subscription: Subscription = new Subscription();
 
   constructor(private http: HttpClient) {}
@@ -36,6 +38,13 @@ export class DashboardComponent {
       .pipe(
         switchMap(() => {
           return this.fetchLastHourAvg();
+        })
+      )
+      .subscribe();
+    this.subscription = timer(0, 5000)
+      .pipe(
+        switchMap(() => {
+          return this.fetchUsersWithAboveAvgUsage();
         })
       )
       .subscribe();
@@ -70,6 +79,31 @@ export class DashboardComponent {
         return EMPTY;
       })
     );
+  }
+
+  private fetchUsersWithAboveAvgUsage(): Observable<Array<{
+    user: User;
+    userAvg: number;
+  }> | null> {
+    return this.http
+      .get<Array<{ user: User; userAvg: number }> | null>(
+        'http://localhost:8080/above-avg-usage-users'
+      )
+      .pipe(
+        catchError((error: any) => {
+          console.error(
+            'Error fetching users with above average usage:',
+            error
+          );
+          return EMPTY;
+        }),
+        tap((data: Array<{ user: User; userAvg: number }> | null | null) => {
+          if (data) {
+            console.log('data', data);
+            this.usersWithAboveAvgUsage = data;
+          }
+        })
+      );
   }
 
   private getFormattedTime(timestamp: number): string {
